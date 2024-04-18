@@ -1,0 +1,11 @@
+# Build artifacts
+dist
+
+# Node
+node_modules
+npm-debug.log
+.pnpm-debug.log*
+.npm
+
+# OS Files
+.DS_*
