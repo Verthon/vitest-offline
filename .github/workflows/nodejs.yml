@@ -5,40 +5,37 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**.md'  # Ignore markdown file changes for running workflows
+      - '**.md'
 
 jobs:
   build:
-    runs-on: ubuntu-20.04  # Specified Ubuntu version for consistency
-    strategy:
-      matrix:
-        node-version: '.nvmrc'
-
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Set up pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: 8
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'pnpm'
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
 
-    - name: Install dependencies
-      run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-    # - name: Run tests
-    #   run: pnpm run test:unit
+      # Uncomment the following lines if you are ready to include testing and publishing steps
+      # - name: Run tests
+      #   run: pnpm run test:unit
 
-    - name: Build
-      run: pnpm build
+      - name: Build
+        run: pnpm build
 
-    # - name: Publish to npm
-    #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    #   run: pnpm publish --access public
-    #   env:
-    #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # - name: Publish to npm
+      #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      #   run: pnpm publish --access public
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
