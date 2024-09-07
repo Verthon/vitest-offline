@@ -1,43 +1,58 @@
-import http from "http";
-import https from "https";
+import { beforeEach, afterEach } from "vitest";
 
-let originalHttp: typeof http.request;
-let originalHttps: typeof https.request;
+import { interceptFetch, restoreFetch } from "./fetchInterceptor.js";
+import { interceptHttp, restoreHttp } from "./httpInterceptor.js";
+import { interceptHttps, restoreHttps } from "./httpsInterceptor.js";
 
-function interceptNetworkRequests(mode: "warn" | "block"): void {
-	originalHttp = http.request;
-	originalHttps = https.request;
+type SetupNetworkInterceptorProps = {
+	requestHandlingMode?: "block";
+};
 
-	const handler = (
-		options: http.RequestOptions | string | URL,
-		callback?: (res: http.IncomingMessage) => void
-	): http.ClientRequest => {
-		if (mode === "warn") {
-			console.warn("Network request detected:", options);
-			return originalHttp(options, callback);
-		} else {
-			// block mode
-			throw new Error("Network requests are blocked in offline mode");
-		}
-	};
+let isBlocked = false;
+let interceptedRequests: string[] = [];
 
-	// Wrap the handler in a function that captures and properly handles the error for testing
-	const wrappedHandler = (options: any, callback: any) => {
-		try {
-			return handler(options, callback);
-		} catch (error) {
-			// Pass errors to Vitest's error handling by rejecting a promise
-			return new Promise((_, reject) => reject(error));
-		}
-	};
+const interceptNetworkRequests = (action: "block" | "warn"): void => {
+	if (action === "block" && !isBlocked) {
+		console.log("Interceptor mode:", action);
 
-	http.request = wrappedHandler as any;
-	https.request = wrappedHandler as any;
-}
+		global.fetch = async (...args) => {
+			interceptedRequests.push(`Intercepted fetch request to: ${args[0]}`);
+			return Promise.reject(new Error("Network requests are blocked"));
+		};
 
-function restoreNetworkRequests(): void {
-	http.request = originalHttp;
-	https.request = originalHttps;
-}
+		// interceptFetch();
+		interceptHttp();
+		interceptHttps();
 
-export { interceptNetworkRequests, restoreNetworkRequests };
+		isBlocked = true;
+	} else if (action === "warn" && isBlocked) {
+		restoreNetworkRequests();
+	}
+};
+
+const restoreNetworkRequests = (): void => {
+	restoreFetch();
+	restoreHttp();
+	restoreHttps();
+	isBlocked = false;
+};
+
+const checkForInterceptedRequests = (): void => {
+	if (interceptedRequests.length > 0) {
+		const message = interceptedRequests.join("\n");
+		throw new Error(`Test failed due to network requests:\n${message}`);
+	}
+};
+
+export const setupNetworkInterceptor = () => {
+	beforeEach(() => {
+		console.log("interceptNetworkRequests");
+		interceptNetworkRequests("block");
+	});
+
+	afterEach(() => {
+		console.log("restoreNetworkRequests");
+		checkForInterceptedRequests();
+		restoreNetworkRequests();
+	});
+};

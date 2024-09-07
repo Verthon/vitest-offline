@@ -1,1 +1,1 @@
-export { interceptNetworkRequests, restoreNetworkRequests } from "./intercept.js";
+export { setupNetworkInterceptor } from "./intercept.js";
