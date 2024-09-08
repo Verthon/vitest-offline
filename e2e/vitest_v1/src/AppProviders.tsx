@@ -19,6 +19,8 @@ const testQueryClient = new QueryClient({
 
 export const TestAppProviders = ({ children }: PropsWithChildren) => {
 	return (
-		<QueryClientProvider client={testQueryClient}>{children}</QueryClientProvider>
+		<QueryClientProvider client={testQueryClient}>
+			{children}
+		</QueryClientProvider>
 	);
 };

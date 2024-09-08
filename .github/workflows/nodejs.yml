@@ -27,12 +27,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      # Uncomment the following lines if you are ready to include testing and publishing steps
-      # - name: Run tests
-      #   run: pnpm run test:unit
-
       - name: Build
         run: pnpm build
+
+      - name: Run unit tests
+        run: pnpm run test:unit
+
+      - name: Run e2e tests
+        run: pnpm run test:e2e
 
       # - name: Publish to npm
       #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'

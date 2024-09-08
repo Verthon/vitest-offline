@@ -14,7 +14,7 @@ const renderApp = () => {
 			<QueryClientProvider client={queryClient}>
 				<App />
 			</QueryClientProvider>
-		</StrictMode>
+		</StrictMode>,
 	);
 };
 

@@ -5,7 +5,7 @@ export const App = () => {
 		queryKey: ["repoData"],
 		queryFn: async () => {
 			const response = await fetch(
-				"https://api.github.com/repos/TanStack/query"
+				"https://api.github.com/repos/TanStack/query",
 			);
 			return await response.json();
 		},

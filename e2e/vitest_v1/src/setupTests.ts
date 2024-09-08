@@ -4,7 +4,7 @@ import {
 	restoreNetworkRequests,
 } from "../../../src/index.js";
 
-interceptNetworkRequests('block');
+interceptNetworkRequests("block");
 
 // beforeEach(() => {
 // 	interceptNetworkRequests("block");

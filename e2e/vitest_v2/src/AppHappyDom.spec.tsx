@@ -17,10 +17,10 @@ describe("App", () => {
 				render(
 					<TestAppProviders>
 						<App />
-					</TestAppProviders>
-				)
+					</TestAppProviders>,
+				),
 			).toThrow();
-		}
+		},
 	);
 
 	it("should pass if the call to api is mocked with msw", () => {
@@ -29,7 +29,7 @@ describe("App", () => {
 		render(
 			<TestAppProviders>
 				<App />
-			</TestAppProviders>
+			</TestAppProviders>,
 		);
 
 		expect(screen.getByText(/Loading.../i)).toBeInTheDocument();

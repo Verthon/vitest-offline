@@ -3,9 +3,13 @@ dist
 
 # Node
 node_modules
-npm-debug.log
-.pnpm-debug.log*
-.npm
 
 # OS Files
 .DS_*
+
+
+# npm
+npm-debug.log
+.pnpm-debug.log*
+.npm
+*.tgz
