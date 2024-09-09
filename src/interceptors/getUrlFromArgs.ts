@@ -1,7 +1,6 @@
 import { URL } from "node:url";
 
 export const getUrlFromArgs = (args: unknown[]) => {
-	console.log('args', args)
 	if (typeof args[0] === "string" || args[0] instanceof URL) {
 		try {
 			return new URL(args[0].toString()).href;

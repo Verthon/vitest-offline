@@ -1,18 +1,32 @@
 {
+	"$schema": "http://json-schema.org/draft-07/schema#",
 	"name": "vitest-offline",
 	"version": "1.0.0",
 	"description": "Addon for your Vitest configuration, which will fail tests that make a network requests.",
 	"main": "dist/index.js",
+	"exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.cjs"
+    }
+  },
 	"type": "module",
 	"files": [
 		"dist"
 	],
 	"scripts": {
-		"test:unit": "vitest",
-		"build": "rm -rf dist && tsc --project tsconfig.build.json",
+		"test:unit": "vitest run",
+		"prepublishOnly": "pnpm run type-check && pnpm run lint && pnpm run format && pnpm run check-exports && pnpm run test:unit && pnpm run test:e2e",
+		"build": "tsup",
 		"check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+		"type-check": "tsc",
 		"format": "pnpm biome format --write",
-		"lint": "pnpm biome lint"
+		"lint": "pnpm biome lint",
+		"local-release": "changeset version && changeset publish",
+		"test:e2e:vitest1": "cd e2e/vitest_v1 && pnpm i && pnpm run test",
+		"test:e2e:vitest2": "cd e2e/vitest_v2 && pnpm i && pnpm run test",
+		"test:e2e": "pnpm run test:e2e:vitest1 && pnpm run test:e2e:vitest2"
 	},
 	"keywords": [
 		"vitest"
@@ -20,10 +34,15 @@
 	"author": "Krzysztof Sordyl (https://sordyl.dev)",
 	"license": "MIT",
 	"repository": "https://github.com/Verthon/vitest-offline",
+	"bugs": {
+		"url": "https://github.com/Verthon/vitest-offline/issues"
+	},
 	"devDependencies": {
 		"@arethetypeswrong/cli": "0.15.4",
 		"@biomejs/biome": "1.8.3",
+		"@changesets/cli": "2.27.8",
 		"@types/node": "20.12.7",
+		"tsup": "8.2.4",
 		"typescript": "5.5.4"
 	},
 	"peerDependencies": {

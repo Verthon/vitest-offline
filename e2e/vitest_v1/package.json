@@ -6,7 +6,8 @@
 	"private": "true",
 	"type": "module",
 	"scripts": {
-		"test": "vitest run"
+		"test": "vitest run",
+		"test:failure": "CHECK_TEST_FAILURE=true vitest run"
 	},
 	"keywords": [],
 	"author": "",
