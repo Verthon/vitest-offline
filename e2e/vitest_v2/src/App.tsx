@@ -13,7 +13,7 @@ export const App = () => {
 
 	if (isPending) return "Loading...";
 
-	if (error) return "Error: " + error.message;
+	if (error) return `Error: ${error.message}`;
 
 	return (
 		<div>

@@ -10,12 +10,14 @@ export type Interceptor = (
 	onIntercept: (method: string, url: string) => void,
 ) => () => void;
 
+export type Restore = undefined | (() => void);
+
 type InterceptorState = {
 	isBlocked: boolean;
 	interceptedRequests: string[];
-	restoreFetch: undefined | (() => void);
-	restoreHttps: undefined | (() => void);
-	restoreHttp: undefined | (() => void);
+	restoreFetch: Restore;
+	restoreHttps: Restore;
+	restoreHttp: Restore;
 };
 
 const createInterceptorState = () => {
@@ -38,14 +40,11 @@ type InterceptNetworkRequestsProps = {
 
 const interceptNetworkRequests = ({
 	state,
-	requestHandlingMode,
 	interceptFetch,
 	interceptHttp,
 	interceptHttps,
 }: InterceptNetworkRequestsProps): void => {
 	if (!state.isBlocked) {
-		console.log("Interceptor mode:", requestHandlingMode);
-
 		const restoreFetch = interceptFetch((_method, url) => {
 			state.interceptedRequests.push(`Intercepted fetch request to: ${url}`);
 		});
@@ -74,7 +73,6 @@ const restoreNetworkRequests = (state: InterceptorState) => {
 const checkForInterceptedRequests = (state: InterceptorState) => {
 	if (state.interceptedRequests.length > 0) {
 		const message = state.interceptedRequests.join("\n");
-		console.log("message", message);
 		throw new Error(`Test failed due to network requests:\n${message}`);
 	}
 };
